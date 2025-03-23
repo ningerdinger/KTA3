@@ -1,1 +1,1 @@
-"# KTA3" 
+Key Topics in AI course OU
