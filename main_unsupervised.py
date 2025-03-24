@@ -4,7 +4,7 @@ from sklearn.metrics import calinski_harabasz_score, silhouette_score
 import os
 import shutil
 
-def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
+def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
     best_score = -1
