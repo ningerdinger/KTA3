@@ -29,11 +29,9 @@ def extract_frames(video_file_path, video_name, sample_every):
   return frame_list
   
 def save_face_list(face_list_movie,faces_folder,movie,extension):
-  print('start saving faces')
   saved_faces = 0
   for i, face in enumerate(face_list_movie):
       if face.shape[0] > 10 and face.shape[1] > 10:
           cv.imwrite(faces_folder + movie + '_' + str(saved_faces) + extension, face)
           saved_faces += 1
-  print(f"Successfully saved {saved_faces} face images in {faces_folder}")
   return

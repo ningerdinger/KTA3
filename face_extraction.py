@@ -31,4 +31,11 @@ def process_image(image,x_extra,y_extra, min_confidence):
   image_copy = np.copy(image.numpy_view())
   face_list = extract_faces(image_copy,detection_result,x_extra,y_extra)
   return face_list
-  
+
+def check_face(image,detector):
+  is_face = True
+  image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+  boxes, _ = detector.detect(image_rgb)
+  if boxes is None:
+    is_face = False
+  return is_face

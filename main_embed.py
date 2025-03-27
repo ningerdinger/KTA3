@@ -5,9 +5,9 @@ from pathlib import Path  # import Path from pathlib module
 from embed import embed_face_net
 
 
-FACES_FOLDER_TRAINING = 'D:\\KTAI\\assignments\\3\\face_folder\\'
-OUTPUT_FOLDER_RESULTS = 'D:\\KTAI\\assignments\\3\\results\\'
-RESULTS_NAME = 'first_result.csv'
+FACES_FOLDER_TRAINING = 'D:\KTAI\\assignments\\3\\repo\\face_folder\\'
+OUTPUT_FOLDER_RESULTS = 'D:\\KTAI\\assignments\\3\\repo\\results'
+RESULTS_NAME = 'second_result.csv'
 directory = Path(FACES_FOLDER_TRAINING)
 
 
