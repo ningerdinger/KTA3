@@ -1,11 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.metrics import calinski_harabasz_score, silhouette_score
+from sklearn.metrics import calinski_harabasz_score, silhouette_score, pairwise_distances_argmin_min
 import os
 import shutil
 import joblib
-
+import seaborn as sns
+import numpy as np
 
 def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     embeddings_df = pd.read_csv(results_csv)
@@ -25,7 +26,6 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     for n_clusters in range(min_clusters, max_clusters + 1):
         kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
         labels = kmeans.labels_
-        joblib.dump(kmeans, os.path.join(OUTPUT_BASE_FOLDER, 'kmeans_model.pkl'))
         silhouette_avg = silhouette_score(embeddings, labels)
         calinski_avg = calinski_harabasz_score(embeddings, labels)
         silhouette_scores.append(silhouette_avg)
@@ -56,42 +56,44 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     plt.legend()
     plt.title('Calinski-Harabasz score vs number of clusters')
 
-
     plt.tight_layout()
-
-
     plt.savefig('Plots/clustering_scores.png')
     plt.show()
 
     return best_n_clusters_silhouette, best_n_clusters_calinski
 
-def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n_clusters=2):
+def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n_clusters=2, thresholdperentile=95):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
+    joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
     labels = kmeans.labels_
 
-    for cluster in range(n_clusters):
-        cluster_folder = os.path.join(output_base_folder, f'cluster_{cluster}')
-        os.makedirs(cluster_folder, exist_ok=True)
+    distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_)[1]
+    threshold_distance = np.percentile(distances, thresholdperentile)
+
+    sns.histplot(distances)
+    plt.axvline(threshold_distance, color='r', linestyle='--', label=f'95th percentile ({threshold_distance:.2f})')
+    plt.xlabel('Distance')
+    plt.ylabel('Frequency')
+    plt.legend()
+    plt.title('Distribution of distances to cluster centers')
+    plt.savefig('Plots/clusertering_distances.png')
+    plt.show()
 
     for i, file_name in enumerate(embeddings_df.columns):
         src_path = os.path.join(faces_folder, file_name)
-        dst_path = os.path.join(output_base_folder, f'cluster_{labels[i]}', file_name)
+        if distances[i] > threshold_distance:
+            dst_path = os.path.join(output_base_folder, 'outliers', file_name)
+        else:
+            dst_path = os.path.join(output_base_folder, f'cluster_{labels[i]}', file_name)
+        os.makedirs(os.path.dirname(dst_path), exist_ok=True)
         shutil.copy(src_path, dst_path)
 
-RESULTS_CSV = 'D:\\KTAI\\assignments\\3\\repo\\results\\second_result.csv'
+RESULTS_CSV = 'D:\\KTAI\\assignments\\3\\repo\\results\\results.csv'
 FACES_FOLDER = 'D:\KTAI\\assignments\\3\\repo\\face_folder\\'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
-separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_silhouette)
-
-'''print(f"Best number of clusters (Silhouette): {best_clusters_silhouette}")
-print(f"Best number of clusters (Calinski-Harabasz): {best_clusters_calinski}")'''
-
-
-''' Voor het inlezen van het model:
-import joblib
-kmeans = joblib.load(os.path.join(output_base_folder, 'kmeans_model.pkl'))'''
+separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_silhouette, thresholdperentile=95)
