@@ -4,6 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import calinski_harabasz_score, silhouette_score
 import os
 import shutil
+import joblib
 
 
 def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
@@ -20,6 +21,7 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
     for n_clusters in range(min_clusters, max_clusters + 1):
         kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
         labels = kmeans.labels_
+        joblib.dump(kmeans, os.path.join(OUTPUT_BASE_FOLDER, 'kmeans_model.pkl'))
         silhouette_avg = silhouette_score(embeddings, labels)
         calinski_avg = calinski_harabasz_score(embeddings, labels)
         silhouette_scores.append(silhouette_avg)
@@ -78,10 +80,15 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
 
 RESULTS_CSV = 'D:\\KTAI\\assignments\\3\\repo\\results\\second_result.csv'
 FACES_FOLDER = 'D:\KTAI\\assignments\\3\\repo\\face_folder\\'
-OUTPUT_BASE_FOLDER = 'Clusters'
+OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
 separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_silhouette)
 
 '''print(f"Best number of clusters (Silhouette): {best_clusters_silhouette}")
 print(f"Best number of clusters (Calinski-Harabasz): {best_clusters_calinski}")'''
+
+
+''' Voor het laden van kmeans model
+import joblib
+kmeans = joblib.load(os.path.join(output_base_folder, 'kmeans_model.pkl'))'''
