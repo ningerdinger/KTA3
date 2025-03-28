@@ -7,7 +7,7 @@ import shutil
 import joblib
 
 
-def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
+def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
     best_silhouette_score = -1
@@ -17,6 +17,10 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
     silhouette_scores = []
     calinski_scores = []
 
+    if not os.path.exists('Plots'):
+        os.makedirs('Plots')
+    if not os.path.exists('KMEANS_OUTPUT'):
+        os.makedirs('KMEANS_OUTPUT')
 
     for n_clusters in range(min_clusters, max_clusters + 1):
         kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
@@ -55,8 +59,7 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=10):
 
     plt.tight_layout()
 
-    if not os.path.exists('Plots'):
-        os.makedirs('Plots')
+
     plt.savefig('Plots/clustering_scores.png')
     plt.show()
 
@@ -89,6 +92,6 @@ separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clu
 print(f"Best number of clusters (Calinski-Harabasz): {best_clusters_calinski}")'''
 
 
-''' Voor het laden van kmeans model
+''' Voor het inlezen van het model:
 import joblib
 kmeans = joblib.load(os.path.join(output_base_folder, 'kmeans_model.pkl'))'''
