@@ -4,6 +4,15 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+
+#extract_faces: function that takes an image and detction result and isolates the faces in the image. The isolated faces in the image are cut out of the image and appende to a list.
+#               This list is returned.
+#params
+#image:             the image that is assessed
+#detection_result:  the detection result object
+#x_extra:           the extra pixels that are added in the x-direction
+#y_extra:           the extra pixels that are added in the y-direction
+#return:            list of face images
 def extract_faces(image, detection_result, x_extra, y_extra):
   cropped_image_list = []
   for detection in detection_result.detections:
@@ -18,7 +27,13 @@ def extract_faces(image, detection_result, x_extra, y_extra):
       cropped_image_list.append(cropped_image_bgr)
   return cropped_image_list
 
-
+#process_image: function assess an image and delivers a list with faces from the image.
+#               This fuction uses the mediapipe library form google (https://ai.google.dev/edge/mediapipe/solutions/guide). The model that is used is BlazeFace.
+#image:             the image that is assessed
+#x_extra:           the extra pixels that are added in the x-direction
+#y_extra:           the extra pixels that are added in the y-direction
+#min_confidence:    a measure for the belief that a subset of the image is a face
+#return:            list of face images
 def process_image(image,x_extra,y_extra, min_confidence):
   base_options = python.BaseOptions(model_asset_path='blaze_face_short_range.tflite')
   options = vision.FaceDetectorOptions(base_options=base_options)
@@ -32,6 +47,12 @@ def process_image(image,x_extra,y_extra, min_confidence):
   face_list = extract_faces(image_copy,detection_result,x_extra,y_extra)
   return face_list
 
+
+#check_face: function the performs a check on an image to assess if it is an iamge on a face. The detector is the MTCNN detector from 
+#Google FaceNet (https://arxiv.org/abs/1503.03832). Good desciption of the use: https://medium.com/@culuma/face-recognition-with-facenet-and-mtcnn-11e77240adb6
+#image:     the image to be assessed
+#detector:  the detector to be used
+#return:    True if face, False if not a face
 def check_face(image,detector):
   is_face = True
   image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
