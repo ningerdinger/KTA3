@@ -29,6 +29,20 @@ def apply_cutout(img, size=30):
     img[y1:y1 + size, x1:x1 + size] = 0  # Apply black box
     return img
 
+def distort_image(image, distortion_level):
+    h, w = image.shape[:2]
+    src_pts = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
+    dst_pts = np.float32([
+        [0, 0 + distortion_level],
+        [w, 0 - distortion_level],
+        [w, h + distortion_level],
+        [0, h - distortion_level]
+    ])
+    M = cv2.getPerspectiveTransform(src_pts, dst_pts)
+    distorted_image = cv2.warpPerspective(image, M, (w, h))
+    return distorted_image
+
+
 
 # Function to Process Each Character Folder
 def process_character_images(character, input_dir, output_dir, augmentations=5):
