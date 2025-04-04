@@ -8,6 +8,14 @@ import joblib
 import seaborn as sns
 import numpy as np
 
+
+# find_best_number_of_clusters: function that takes a csv file with embeddings and finds the best number of clusters for KMeans clustering.
+# params
+# results_csv:       the csv file with the embeddings
+# min_clusters:      the minimum number of clusters to test
+# max_clusters:      the maximum number of clusters to test
+# return:            the best number of clusters based on silhouette score and calinski-harabasz score
+
 def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
@@ -62,6 +70,15 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
 
     return best_n_clusters_silhouette, best_n_clusters_calinski
 
+
+# separate_images_by_clusters: function that takes a csv file with embeddings and separates the images into clusters based on KMeans clustering.
+# params
+# results_csv:          the csv file with the embeddings
+# faces_folder:         the folder with the images
+# output_base_folder:   the folder to save the clustered images
+# n_clusters:           the number of clusters to use
+# thresholdperentile:   the percentile to use for the threshold distance
+# return:               None
 def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n_clusters=2, thresholdperentile=95):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
@@ -70,7 +87,7 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
     joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
     labels = kmeans.labels_
 
-    distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_)[1]
+    distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_,metric='euclidian' )[1]
     threshold_distance = np.percentile(distances, thresholdperentile)
 
     sns.histplot(distances)
