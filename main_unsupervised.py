@@ -79,7 +79,7 @@ def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
 # n_clusters:           the number of clusters to use
 # thresholdperentile:   the percentile to use for the threshold distance
 # return:               None
-def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n_clusters=2, thresholdperentile=95):
+def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n_clusters=2, thresholdperentile=100):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
 
@@ -87,15 +87,15 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
     joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
     labels = kmeans.labels_
 
-    distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_,metric='euclidian' )[1]
-    threshold_distance = np.percentile(distances, thresholdperentile)
+    distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_)[1]
+    threshold_distance = np.percentile(distances, 95)
 
     sns.histplot(distances)
     plt.axvline(threshold_distance, color='r', linestyle='--', label=f'95th percentile ({threshold_distance:.2f})')
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.legend()
-    plt.title('Distribution of distances to cluster centers')
+    plt.title('Distribution of distances to cluster centers on trainingset')
     plt.savefig('Plots/clusertering_distances.png')
     plt.show()
 
@@ -103,13 +103,19 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
         src_path = os.path.join(faces_folder, file_name)
         if distances[i] > threshold_distance:
             dst_path = os.path.join(output_base_folder, 'outliers', file_name)
+            embeddings_df.drop(file_name, axis=1, inplace=True)
         else:
             dst_path = os.path.join(output_base_folder, f'cluster_{labels[i]}', file_name)
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
         shutil.copy(src_path, dst_path)
 
-RESULTS_CSV = 'D:\\KTAI\\assignments\\3\\repo\\results\\results.csv'
-FACES_FOLDER = 'D:\KTAI\\assignments\\3\\repo\\face_folder\\'
+    embeddings = embeddings_df.T.values
+    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
+    joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
+
+
+RESULTS_CSV = 'results/second_results.csv'
+FACES_FOLDER = 'face_folder'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
