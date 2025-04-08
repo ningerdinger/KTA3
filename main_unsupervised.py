@@ -83,12 +83,12 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
 
-    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
+    kmeans = KMeans(random_state=0, n_clusters=n_clusters).fit(embeddings)
     joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
     labels = kmeans.labels_
 
     distances = pairwise_distances_argmin_min(embeddings, kmeans.cluster_centers_)[1]
-    threshold_distance = np.percentile(distances, 95)
+    threshold_distance = np.percentile(distances, thresholdperentile)
 
     sns.histplot(distances)
     plt.axvline(threshold_distance, color='r', linestyle='--', label=f'95th percentile ({threshold_distance:.2f})')
@@ -119,4 +119,4 @@ FACES_FOLDER = 'face_folder'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
-separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_silhouette, thresholdperentile=95)
+separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=5, thresholdperentile=95)
