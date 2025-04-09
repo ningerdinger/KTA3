@@ -119,4 +119,4 @@ FACES_FOLDER = 'face_folder'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
-separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=5, thresholdperentile=95)
+separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_silhouette, thresholdperentile=95)
