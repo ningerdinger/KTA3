@@ -13,6 +13,9 @@ def add_gaussian_noise(img):
 
 # Function: Apply Motion Blur
 def apply_blur(img, ksize=10):
+    # Ensure ksize is a positive odd integer
+    if ksize <= 0 or ksize % 2 == 0:
+        raise ValueError("Kernel size (ksize) must be a positive odd integer.")
     return cv2.GaussianBlur(img, (ksize, ksize), 0)
 
 # Function: Rotate Image
@@ -50,7 +53,7 @@ def process_images_with_augmentations(input_dir, output_dir):
         "horizontal_flip": lambda img: cv2.flip(img, 1),
         "brightness_contrast": lambda img: adjust_brightness_contrast(img, alpha=1.5, beta=20),
         "gaussian_noise": add_gaussian_noise,
-        "motion_blur": apply_blur,
+        #"motion_blur": apply_blur,
         "rotation": lambda img: rotate_image(img, angle=np.random.randint(-15, 15)),
         "cutout": apply_cutout,
         "distortion": lambda img: distort_image(img, distortion_level=np.random.randint(-100, 100))
@@ -76,4 +79,3 @@ def process_images_with_augmentations(input_dir, output_dir):
             aug_img_path = os.path.join(output_dir, aug_name, aug_img_name)
             cv2.imwrite(aug_img_path, aug_img)
 
-process_images_with_augmentations('face_folder', 'augmented_images')
