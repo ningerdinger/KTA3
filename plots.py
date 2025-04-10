@@ -37,7 +37,7 @@ def plot_scores(min_clusters, max_clusters, silhouette_scores, calinski_scores, 
 def plot_histplot_percentile(dataset, threshold):
     sns.histplot(dataset)
     plt.axvline(threshold, color='r', linestyle='--',
-                label=f'85th percentile of TrainingSet({threshold:.2f})')
+                label=f'Treshold Distance: ({threshold:.2f})')
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.legend()
