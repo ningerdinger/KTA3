@@ -63,7 +63,7 @@ def plot_cluster_presence(cluster_dataframe):
     plt.ylabel("Cluster")
     row_labels = cluster_dataframe.index.tolist()
     row_labels = ['outlier' if label == -1 else label for label in row_labels]
-    plt.yticks(ticks=[i + 0.5 for i in range(len(row_labels))], labels=row_labels, rotation=0)
+    plt.yticks(ticks=range(len(row_labels)), labels=row_labels)
     save_path = save_with_incremental_filename('Plots/Heatmap.png')
     plt.savefig(save_path)
     plt.show()
