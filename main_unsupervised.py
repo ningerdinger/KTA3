@@ -113,7 +113,7 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
     joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
     return
-
+##
 '''RESULTS_CSV = 'results/second_results.csv'
 FACES_FOLDER = 'face_folder'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
