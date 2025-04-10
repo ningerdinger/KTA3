@@ -16,7 +16,7 @@ import numpy as np
 # max_clusters:      the maximum number of clusters to test
 # return:            the best number of clusters based on silhouette score and calinski-harabasz score
 
-def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=15):
+def find_best_number_of_clusters(results_csv, min_clusters=2, max_clusters=25):
     embeddings_df = pd.read_csv(results_csv)
     embeddings = embeddings_df.T.values
     best_silhouette_score = -1
@@ -112,11 +112,11 @@ def separate_images_by_clusters(results_csv, faces_folder, output_base_folder, n
     embeddings = embeddings_df.T.values
     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(embeddings)
     joblib.dump(kmeans, os.path.join(output_base_folder, 'kmeans.pkl'))
+    return
 
-
-RESULTS_CSV = 'results/second_results.csv'
+'''RESULTS_CSV = 'results/second_results.csv'
 FACES_FOLDER = 'face_folder'
 OUTPUT_BASE_FOLDER = 'KMEANS_OUTPUT'
 
 best_clusters_silhouette, best_clusters_calinski = find_best_number_of_clusters(RESULTS_CSV)
-separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_calinski, thresholdperentile=95)
+separate_images_by_clusters(RESULTS_CSV, FACES_FOLDER, OUTPUT_BASE_FOLDER, n_clusters=best_clusters_calinski, thresholdperentile=95)'''
