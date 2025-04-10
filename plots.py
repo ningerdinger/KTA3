@@ -37,7 +37,7 @@ def plot_scores(min_clusters, max_clusters, silhouette_scores, calinski_scores, 
 def plot_histplot_percentile(dataset, threshold):
     sns.histplot(dataset)
     plt.axvline(threshold, color='r', linestyle='--',
-                label=f'85th percentile ({threshold:.2f})')
+                label=f'85th percentile of TrainingSet({threshold:.2f})')
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.legend()
@@ -46,12 +46,13 @@ def plot_histplot_percentile(dataset, threshold):
     plt.savefig(save_path)
     plt.show()
 
-def plot_actor_presence(count_df, value_col, cluster_choice,title):
-    sns.histplot(data=count_df, x=value_col, bins=cluster_choice + 2)
+def plot_actor_presence(count_df, value_col, cluster_choice, title):
+    sns.histplot(data=count_df, x=value_col, bins=cluster_choice + 1, discrete=True)
     plt.title(f'Presence Count of Actors in {title}')
     save_path = save_with_incremental_filename(f'Plots/Presence in {title} dataset.png')
     plt.savefig(save_path)
-    plt.xticks(ticks=range(cluster_choice + 1), labels=['outlier'] + list(range(1, cluster_choice + 1)))
+    # Adjust x-axis labels to include 'outlier' followed by cluster numbers
+    plt.xticks(ticks=range(-1,cluster_choice), labels=['outlier'] + list(range(cluster_choice)))
     plt.show()
 
 def plot_cluster_presence(cluster_dataframe):

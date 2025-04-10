@@ -48,19 +48,18 @@ def process_videos_to_dataframe(movie_test_list, movie_folder, kmeans, samples_p
     return cluster_presence
 
 
-def process_test_embeddings(test_embeddings, test_embeddings_df, kmeans, output_folder, face_folder_test,results_output_path = 'image_to_cluster_results.csv'):
+def process_test_embeddings(test_embeddings, test_embeddings_df, kmeans, output_folder,threshold, face_folder_test,results_output_path = 'image_to_cluster_results.csv'):
     # Predict clusters and calculate distances
     predicted_clusters = kmeans.predict(test_embeddings)
     distances_test = pairwise_distances_argmin_min(test_embeddings, kmeans.cluster_centers_)[1]
-    threshold_distance_85 = np.percentile(distances_test, 85)
 
     # Plot histogram
-    plots.plot_histplot_percentile(distances_test, threshold_distance_85)
+    plots.plot_histplot_percentile(distances_test, threshold)
 
     # Create image-to-cluster mapping
     image_cluster_results = []
     for i, cluster in enumerate(predicted_clusters):
-        if distances_test[i] > threshold_distance_85:
+        if distances_test[i] > threshold:
             cluster = -1
         image_cluster_results.append({
             "Image": test_embeddings_df.columns[i],
