@@ -19,9 +19,6 @@ def process_movies(movie_list, movie_folder, faces_folder, input_extension, outp
         padding_x (int): Horizontal padding around detected faces.
         padding_y (int): Vertical padding around detected faces.
         min_confidence (float): Minimum confidence for face detection.
-
-    Returns:
-        None
     """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     mtcnn = MTCNN(keep_all=True, device=device)
