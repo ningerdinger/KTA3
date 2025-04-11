@@ -43,10 +43,25 @@ def extract_frames(video_file_path, video_name, sample_every):
 # extension:          the extension of the saved faces
 # return:             None
 
-def save_face_list(face_list_movie,faces_folder,movie,extension):
-  saved_faces = 0
-  for i, face in enumerate(face_list_movie):
-      if face.shape[0] > 10 and face.shape[1] > 10:
-          cv.imwrite(faces_folder + movie + '_' + str(saved_faces) + extension, face)
-          saved_faces += 1
-  return
+def save_face_list(face_list_movie, faces_folder, movie, extension):
+    """
+    Saves a list of faces to the specified folder.
+
+    Parameters:
+        face_list_movie (list): List of faces (images) to save.
+        faces_folder (str): Folder where faces will be saved.
+        movie (str): Name of the movie (used for naming the files).
+        extension (str): File extension for saved images.
+    """
+    # Ensure the output folder exists
+    os.makedirs(faces_folder, exist_ok=True)
+
+    saved_faces = 0
+    for i, face in enumerate(face_list_movie):
+        # Ensure the face has a valid size (greater than 10x10)
+        if face.shape[0] > 10 and face.shape[1] > 10:
+            # Create the full file path for each face image
+            filename = os.path.join(faces_folder, f"{movie}_{saved_faces}{extension}")
+            cv.imwrite(filename, face)
+            saved_faces += 1
+    print(f"Successfully saved {saved_faces} faces to {faces_folder}")
