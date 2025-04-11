@@ -26,11 +26,12 @@ def rotate_image(img, angle=45):
     return cv2.warpAffine(img, matrix, (w, h))
 
 # Function: Apply Cutout (Random Black Box)
-def apply_cutout(img, size=60):
-    h, w = img.shape[:2]
+def apply_cutout(img, size=80):
+    newimg = img
+    h, w = newimg.shape[:2]
     x1, y1 = np.random.randint(0, w - size), np.random.randint(0, h - size)
-    img[y1:y1 + size, x1:x1 + size] = 0  # Apply black box
-    return img
+    newimg[y1:y1 + size, x1:x1 + size] = 0  # Apply black box
+    return newimg
 
 def distort_image(image, distortion_level):
     h, w = image.shape[:2]
@@ -51,12 +52,12 @@ def process_images_with_augmentations(input_dir, output_dir):
     # Define augmentation functions and their names
     augmentations = {
         "horizontal_flip": lambda img: cv2.flip(img, 1),
-        "brightness_contrast": lambda img: adjust_brightness_contrast(img, alpha=1.5, beta=20),
+        "brightness_contrast": lambda img: adjust_brightness_contrast(img, alpha=3, beta=20),
         "gaussian_noise": add_gaussian_noise,
         #"motion_blur": apply_blur,
-        "rotation": lambda img: rotate_image(img, angle=np.random.randint(-15, 15)),
-        "cutout": apply_cutout,
-        "distortion": lambda img: distort_image(img, distortion_level=np.random.randint(-100, 100))
+        "rotation": lambda img: rotate_image(img, angle=45),
+        "distortion": lambda img: distort_image(img, distortion_level=60),
+        "cutout": apply_cutout
     }
 
     # Ensure output directories for each augmentation exist
