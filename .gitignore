@@ -7,5 +7,6 @@
 /results_test/
 /AUGMENTED/
 /recognition-output/
-/distorted_result/
+/distorted_results/
+/test_results/
 /__pycache__/
