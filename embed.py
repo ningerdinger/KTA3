@@ -4,17 +4,20 @@ import numpy as np
 from facenet_pytorch import InceptionResnetV1
 from torchvision import transforms
 
-# embed_face_net: function that takes an image and returns the embedding of the face in the image.
-# params
-# image:            the image to be embedded
-# return:           the embedding of the face in the image
 
 def embed_face_net(image):
-  model = InceptionResnetV1(pretrained='vggface2').eval()
-  img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-  transform = transforms.Compose([transforms.ToPILImage(),transforms.Resize((160, 160)),transforms.ToTensor()])
-  img_tensor = transform(img).unsqueeze(0)
-  with torch.no_grad():
-    embedding = model(img_tensor)
-  return embedding
-  
+    """
+    Embeds a face from an input image using the pre-trained InceptionResnetV1 model.
+
+    Parameters:
+        image (numpy.ndarray): Input image in BGR format.
+    Returns:
+        torch.Tensor: A 1x512-dimensional embedding vector.
+    """
+    model = InceptionResnetV1(pretrained='vggface2').eval()  # Load pre-trained model.
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB.
+    transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize((160, 160)), transforms.ToTensor()])
+    img_tensor = transform(img).unsqueeze(0)  # Resize, normalize, add batch dimension.
+    with torch.no_grad():
+        embedding = model(img_tensor)  # Compute embedding in evaluation mode.
+    return embedding  # Return embedding vector.
