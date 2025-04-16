@@ -98,8 +98,8 @@ def plot_actor_presence(count_df, value_col, cluster_choice, title):
     sns.histplot(data=count_df, x=value_col, bins=cluster_choice + 1, discrete=True)  # Plot actor presence histogram.
     plt.title(f'Presence Count of Actors in {title}')  # Set the plot title.
     save_path = save_with_incremental_filename(f'Plots/Presence in {title} dataset.png')  # Generate a unique file name for saving.
-    plt.savefig(save_path)  # Save the plot as an image.
     plt.xticks(ticks=range(-1, cluster_choice), labels=['outlier'] + list(range(cluster_choice)))  # Customize x-axis labels to include outliers.
+    plt.savefig(save_path)  # Save the plot as an image.
     plt.show()  # Display the plot.
 
 
