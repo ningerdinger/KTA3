@@ -3,10 +3,6 @@
 /KMEANS_OUTPUT/kmeans.pkl
 /face_folder/
 /face_folder_test/
-/results/
-/results_test/
 /AUGMENTED/
 /recognition-output/
-/distorted_results/
-/test_results/
 /__pycache__/
